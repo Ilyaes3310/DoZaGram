@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>DoZagram</title>
+    <title>DoZaGram</title>
 </head>
 <body>
-    <h1>DoZagram</h1>
+    <h1 style="left: 10px;">DoZaGram</h1>
     <ul id="messages"></ul>
-    <input id="messageInput" type="text" placeholder="Enter message..."/>
-    <button id="sendButton">Send</button>
+    <div>
+        <input id="messageInput" type="text" placeholder="Enter message..."/>
+        <button id="sendButton">Send</button>
+    </div>
     
     <script>
         const conn = new WebSocket('ws://localhost:8080/ws');
@@ -16,14 +18,66 @@
             const messages = document.getElementById('messages');
             const message = document.createElement('li');
             message.textContent = event.data;
+            
             messages.appendChild(message);
+            messages.scrollTop = messages.scrollHeight;
         };
 
         document.getElementById('sendButton').onclick = function() {
             const input = document.getElementById('messageInput');
+            if (input.value == '') return;
+
             conn.send(input.value);
             input.value = '';
         };
+
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('sendButton').click();
+            }
+        });
     </script>
+
+    <style>
+        body {
+          margin: 0;
+          padding: 0;
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 10px;
+            margin: 0;
+            background: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        #messages {
+          flex: 1;
+          overflow-y: auto;
+          list-style: none;
+          padding: 10px;
+          margin: 0;
+        }
+        
+        div {
+          padding: 10px;
+          background: #f0f0f0;
+          display: flex;
+          gap: 10px;
+        }
+        
+        #messageInput {
+          flex: 1;
+          padding: 8px;
+        }
+        
+        #sendButton {
+          padding: 8px 16px;
+        }
+    </style>
 </body>
 </html>
